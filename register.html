@@ -6,10 +6,24 @@
 </head>
 <body>
     <form action="http://127.0.0.1:8080/register" method="post">
-        账号：<input type="text" name="cid"/><br/>
-        昵称：<input type="text" name="name"/><br/>
-        密码：<input type="password" name="password"/><br/>
-        <input type="submit" value="提交"/>
+        账号：<input type="text" name="cid" required="required"/><br/>
+        <p>昵称：<input type="text" name="name" required="required"/></p>
+        <p>密码：<input type="password" name="pw" id="pw1" required="required"/></p>
+        <p>确认密码：<input type="password" name="pw" id="pw2" onkeyup="validate()" required="required"/><span id="tips"></span></p>
+        <p><input type="submit" value="注册" id="submit"/></p>
     </form>
+    <script>
+        function validate(){
+            var pw1 = document.getElementById('pw1').value;
+            var pw2 = document.getElementById('pw2').value;
+            if(pw1 != pw2){
+                document.getElementById('tips').innerHTML="<font color='red'>两次输入不一样</font>";
+                document.getElementById("submit").disabled = true;
+            }else{
+                document.getElementById('tips').innerHTML="<font color='green'>输入一致</font>";
+                document.getElementById("submit").disabled = false;
+            }
+        }
+    </script>
 </body>
 </html>

@@ -29,7 +29,7 @@ class TestCase(unittest.TestCase):
 
     def test_find_column(self):
         column = 'password'
-        sql = 'select '+ column + ' from chat_user where id = ' + str(id)
+        sql = 'select ' + column + ' from chat_user where id = ' + str(id)
 
     def test_delete_user(self):
         db.deleteUser(123)

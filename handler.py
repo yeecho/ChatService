@@ -16,16 +16,14 @@ class RegisterHandler(tornado.web.RequestHandler):
         self.render('register.html')
 
     def post(self):
-        str_info = bytes.decode(self.request.body)
-        print('str_info:', str_info)
-        self.register(str_info)
+        cid = self.get_argument('cid')
+        name = self.get_argument('name')
+        password = self.get_argument('pw')
+        print('收到一个注册请求：', cid, name, password)
+        self.register(cid, name, password)
 
-    def register(self, info):
-        values = info.split('&')
-        cid = values[0].split('=')[1]
-        name = values[1].split('=')[1]
-        password = values[2].split('=')[1]
-        print(cid, name, password)
+    def register(self, cid, name, password):
+        print(name)
         r = db.insertUser((cid, name, password))
         self.write(r[1])
 
@@ -39,9 +37,7 @@ class LoginHandler(tornado.web.RequestHandler):
         pass
 
     def post(self):
-        content = bytes.decode(self.request.body)
-        print('content:', content)
-        self.login(content)
+        print('content:', self.request.body)
 
     def login(self, content):
         dct = {'result': False}
