@@ -35,7 +35,7 @@ class TestCase(unittest.TestCase):
         db.deleteUser(123)
 
     def test_update(self):
-        sql = 'update chat_user set name = "liaobo" where cid = 12345'
+        sql = 'update chat_user set contact = "[""1234"", ""12345""]" where cid = 123'
         conn = sqlite3.connect(db.DB)
         cur = conn.cursor()
         cur.execute(sql)

@@ -1,3 +1,4 @@
+import json
 import sqlite3
 
 DB = 'yc.db'
@@ -72,7 +73,20 @@ def loginCheck(cid, pswd):
     r = cur.execute(sql).fetchone()
     if r is not None:
         if str(pswd) == r[0]:
-            return True, (r[1], r[2])
+            name = r[1]
+            contact = r[2]
+            contacts = list()
+            if contact:
+                try:
+                    lst = json.loads(contact)
+                    for cid in lst:
+                        sql = 'select name from chat_user where cid = ' + str(cid)
+                        r = cur.execute(sql).fetchone()
+                        contacts.append((str(cid), r[0]))
+                except Exception as e:
+                    print('联系人数据解析错误')
+                    print(e)
+            return True, (name, contacts)
         else:
             return False, '密码错误'
     else:

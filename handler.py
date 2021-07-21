@@ -23,7 +23,6 @@ class RegisterHandler(tornado.web.RequestHandler):
         self.register(cid, name, password)
 
     def register(self, cid, name, password):
-        print(name)
         r = db.insertUser((cid, name, password))
         self.write(r[1])
 
@@ -37,14 +36,14 @@ class LoginHandler(tornado.web.RequestHandler):
         pass
 
     def post(self):
-        print('content:', self.request.body)
+        cid = self.get_argument('cid')
+        password = self.get_argument('pw')
+        print(cid, password)
+        self.login(cid, password)
 
-    def login(self, content):
+    def login(self, cid, password):
         dct = {'result': False}
         try:
-            d = json.loads(content)
-            cid = d['cid']
-            password = d['password']
             # 数据库中进行账号和密码校验
             r = db.loginCheck(cid, password)
             print(r)
@@ -81,12 +80,12 @@ class ChatHandler(tornado.websocket.WebSocketHandler):
             if msgType == 'handshake':
                 self.handshake(srcId)
             elif msgType == 'chat':
-                desId = info['DesId']
+                desId = info['desId']
                 text = info['text']
                 self.chat(desId, text, srcId)
         except Exception as e:
             print(e)
-            self.write('数据解析出错')
+            self.write_message('数据解析出错')
 
     def on_close(self) -> None:
         # 获取当前断开链接的websocket的key并删除该键值对
@@ -126,9 +125,13 @@ class ChatHandler(tornado.websocket.WebSocketHandler):
     def chat(self, desId, text, srcId):
         print(desId, text, srcId)
         dct = {'MsgType': 'chat', 'SrcId': srcId, 'text': text}
-        handler = self.onlineUsers[desId]
-        print(handler)
-        s = json.dumps(dct)
-        print(s)
-        handler.write_message(s)
+        if desId in self.onlineUsers.keys():
+            handler = self.onlineUsers[desId]
+            print('handler', handler)
+            s = json.dumps(dct)
+            handler.write_message(s)
+        else:
+            dct['text'] = '对方不在线'
+            self.write_message(json.dumps(dct))
+
 
